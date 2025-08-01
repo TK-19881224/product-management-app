@@ -1,0 +1,100 @@
+{
+  "dashboardTitle": "📦 Product Management Dashboard",
+  "searchPlaceholder": "Search",
+  "createProduct": "➕ Add Product",
+  "section": {
+    "basicInfo": "Basic Information",
+    "pricingInfo": "Pricing",
+    "supplyInfo": "Supply Info",
+    "productionInfo": "Production Info",
+    "logisticsInfo": "Logistics",
+    "adminInfo": "Admin Info"
+  },
+  "form": {
+    "name": "Product Name",
+    "price": "Price (Yen)",
+    "stock": "Stock",
+    "minStock": "Minimum Stock",
+    "orderUnit": "Order Unit",
+    "supplierCompany": "Supplier Company",
+    "supplier": "Supplier Contact",
+    "purchasePlace": "Purchase Place",
+    "purchaseDate": "Purchase Date",
+    "lotNumber": "Lot Number",
+    "manufacturer": "Manufacturer",
+    "manufacturerName": "Manufacturer Company",
+    "origin": "Country of Origin",
+    "productionDate": "Production Date",
+    "expiryDate": "Expiry Date",
+    "ingredients": "Ingredients",
+    "storageLocation": "Storage Location",
+    "temperatureZone": "Temperature Zone",
+    "shippingBase": "Shipping Base",
+    "packageSize": "Package Size",
+    "weight": "Weight",
+    "shippingRestriction": "Shipping Restriction",
+    "createdBy": "Created By",
+    "updatedAt": "Last Updated",
+    "createdAt": "Created At",
+    "department": "Department",
+    "status": "Status",
+    "hiddenReason": "Hidden Reason",
+    "submit": "Add Product",
+    "submitting": "Adding..."
+  },
+  "product": {
+    "name": "Product Name",
+    "price": "Price",
+    "stock": "Stock",
+    "minStock": "Min Stock",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "imageUrl": "imageUrl"
+  },
+  "inventory": {
+    "name": "Product Name",
+    "price": "Unit Price (JPY)",
+    "salesPrice": "Sales Price (JPY)",
+    "stock": "Stock",
+    "minStock": "Min Stock",
+    "orderUnit": "Order Unit"
+  },
+  "supply": {
+    "supplierCompany": "Supplier Company",
+    "supplier": "Representative",
+    "purchasePlace": "Purchase Place",
+    "purchaseDate": "Purchase Date",
+    "lotNumber": "Lot Number"
+  },
+  "production": {
+    "manufacturer": "Manufacturer",
+    "manufacturerName": "Manufacturer Name",
+    "origin": "Country of Origin",
+    "productionDate": "Production Date",
+    "expiryDate": "Expiry Date",
+    "ingredients": "Ingredients"
+  },
+  "logistics": {
+    "storageLocation": "Storage Location",
+    "temperatureZone": "Temperature Zone",
+    "shippingBase": "Shipping Base",
+    "packageSize": "Package Size",
+    "weight": "Weight",
+    "shippingRestriction": "Shipping Restriction"
+  },
+  "admin": {
+    "createdBy": "Created By",
+    "department": "Department",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "status": "Status",
+    "hiddenReason": "Hidden Reason"
+  },
+  "image": {
+    "image": "Product Image",
+    "submit": "Submit",
+    "submitting": "Submitting..."
+  }
+}

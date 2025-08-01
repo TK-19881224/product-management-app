@@ -1,0 +1,100 @@
+{
+  "dashboardTitle": "📦 商品管理ダッシュボード",
+  "searchPlaceholder": "検索",
+  "createProduct": "➕ 商品追加",
+  "section": {
+    "basicInfo": "📋 商品一覧(基本情報)",
+    "pricingInfo": "💰 価格・在庫情報",
+    "supplyInfo": "🛒 仕入れ情報",
+    "productionInfo": "🧑‍🌾 生産・製造情報",
+    "logisticsInfo": "📦 ロジスティクス情報",
+    "adminInfo": "🧑‍💻 管理・運用情報"
+  },
+  "form": {
+    "name": "商品名",
+    "price": "価格（円）",
+    "stock": "在庫数",
+    "minStock": "最低在庫数",
+    "orderUnit": "発注単位",
+    "supplierCompany": "仕入れ会社名",
+    "supplier": "仕入れ担当者",
+    "purchasePlace": "仕入れ場所",
+    "purchaseDate": "仕入れ日",
+    "lotNumber": "仕入れロット番号",
+    "manufacturer": "生産者名",
+    "manufacturerName": "生産会社名",
+    "origin": "製造国",
+    "productionDate": "製造日",
+    "expiryDate": "賞味期限",
+    "ingredients": "原材料",
+    "storageLocation": "保管場所",
+    "temperatureZone": "保管温度区分",
+    "shippingBase": "出荷拠点",
+    "packageSize": "梱包サイズ",
+    "weight": "重量",
+    "shippingRestriction": "出荷制限",
+    "createdBy": "登録者",
+    "updatedAt": "最終更新日",
+    "createdAt": "登録日",
+    "department": "管理部門",
+    "status": "ステータス",
+    "hiddenReason": "非表示理由",
+    "submit": "商品を追加",
+    "submitting": "追加中..."
+  },
+  "product": {
+    "name": "商品名",
+    "price": "価格",
+    "stock": "在庫",
+    "minStock": "最低在庫数",
+    "edit": "編集",
+    "delete": "削除",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "imageUrl": "画像URL"
+  },
+  "inventory": {
+    "name": "商品名",
+    "price": "単価（円）",
+    "salesPrice": "販売価格（円）",
+    "stock": "在庫数",
+    "minStock": "最低在庫数",
+    "orderUnit": "発注単位"
+  },
+  "supply": {
+    "supplierCompany": "仕入れ会社名",
+    "supplier": "担当者名",
+    "purchasePlace": "仕入れ場所",
+    "purchaseDate": "仕入れ日",
+    "lotNumber": "ロット番号"
+  },
+  "production": {
+    "manufacturer": "生産者名",
+    "manufacturerName": "製造会社名",
+    "origin": "製造国",
+    "productionDate": "製造日",
+    "expiryDate": "賞味期限",
+    "ingredients": "原材料"
+  },
+  "logistics": {
+    "storageLocation": "保管場所",
+    "temperatureZone": "温度帯",
+    "shippingBase": "出荷拠点",
+    "packageSize": "梱包サイズ",
+    "weight": "重量",
+    "shippingRestriction": "出荷制限"
+  },
+  "admin": {
+    "createdBy": "登録者",
+    "department": "管理部門",
+    "createdAt": "登録日",
+    "updatedAt": "最終更新日",
+    "status": "ステータス",
+    "hiddenReason": "非表示理由"
+  },
+  "image": {
+    "image": "商品画像",
+    "submit": "送信",
+    "submitting": "送信中..."
+  }
+}
