@@ -7,10 +7,10 @@ import {
   getDocs,
   deleteDoc,
   doc,
-  updateDoc,
 } from "firebase/firestore";
 import { productConverter } from "@/lib/productConverter";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 type Product = {
   id: string;
@@ -34,27 +34,16 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
     const snapshot = await getDocs(
       collection(db, "products").withConverter(productConverter)
     );
-    const data = snapshot.docs.map((doc) => doc.data());
-    console.log("Fetched products:", data);
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Product[];
     setProducts(data);
   };
 
   const deleteProduct = async (id: string) => {
     await deleteDoc(doc(db, "products", id));
     fetchProducts();
-  };
-
-  const toggleHidden = async (id: string, currentHidden: boolean = false) => {
-    const productRef = doc(db, "products", id);
-    try {
-      await updateDoc(productRef, {
-        hidden: !currentHidden,
-      });
-      console.log(`Toggled hidden status for ${id} to ${!currentHidden}`);
-      fetchProducts();
-    } catch (error) {
-      console.error("Error updating hidden status:", error);
-    }
   };
 
   const handleSort = (key: SortKey) => {
@@ -85,7 +74,6 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
   return (
     <div className="p-4">
       <div className="mb-4 flex gap-2 flex-wrap items-center">
-        <span className="font-semibold"></span>
         {(["name", "price", "stock", "minStock"] as SortKey[]).map((key) => (
           <button
             key={key}
@@ -117,18 +105,19 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
                   >
                     {t("product.delete")}
                   </button>
-
                 </div>
               </div>
 
               {product.imageUrls && product.imageUrls.length > 0 && (
                 <div className="flex gap-2 ml-4 flex-wrap">
                   {product.imageUrls.map((url, index) => (
-                    <img
+                    <Image
                       key={index}
                       src={url}
                       alt={`${t("product.name")} ${index + 1}`}
-                      className="w-24 h-24 object-cover rounded"
+                      width={96}
+                      height={96}
+                      className="rounded object-cover"
                     />
                   ))}
                 </div>

@@ -80,8 +80,8 @@ export default function ProductionInfo({ searchKeyword = "" }: Props) {
     }
 
     return direction === "asc"
-      ? aCompare.localeCompare(bCompare)
-      : bCompare.localeCompare(aCompare);
+      ? (aCompare as string).localeCompare(bCompare as string)
+      : (bCompare as string).localeCompare(aCompare as string);
   });
 
   const handleSort = (key: SortKey) => {

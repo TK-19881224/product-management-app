@@ -1,20 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm, FieldErrors } from "react-hook-form";
+import { useForm, FieldErrors, UseFormRegister } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 
 import { db, storage } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { productConverter } from "@/lib/productConverter";
 import ExportCSV from "./ExportCSV";
 import ImportCSV from "./ImportCSV";
 
-// Zod バリデーションスキーマ
+// Zod スキーマ
 const schema = z.object({
   name: z.string().min(1),
   price: z.number().min(1),
@@ -39,8 +45,8 @@ const schema = z.object({
   weight: z.string().min(1),
   shippingRestriction: z.string().min(1),
   createdBy: z.string().min(1),
-  updatedAt: z.string().min(1),
-  createdAt: z.string().min(1),
+  updatedAt: z.string().optional(),
+  createdAt: z.string().optional(),
   department: z.string().min(1),
   status: z.string().min(1),
   hiddenReason: z.string().optional(),
@@ -63,25 +69,35 @@ export default function ProductForm() {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
 
   const onSubmit = async (data: FormData) => {
-    const imageUrls: string[] = [];
+    try {
+      const imageUrls: string[] = [];
 
-    for (const file of imageFiles) {
-      const imageRef = ref(storage, `productImages/${Date.now()}_${file.name}`);
-      await uploadBytes(imageRef, file);
-      const url = await getDownloadURL(imageRef);
-      imageUrls.push(url);
+      for (const file of imageFiles) {
+        const imageRef = ref(storage, `productImages/${Date.now()}_${file.name}`);
+        await uploadBytes(imageRef, file);
+        const url = await getDownloadURL(imageRef);
+        imageUrls.push(url);
+      }
+
+      const refDoc = collection(db, "products").withConverter(productConverter);
+
+      const firestoreData = {
+        ...data,
+        imageUrls,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      };
+
+      const docRef = await addDoc(refDoc, firestoreData);
+      await updateDoc(doc(db, "products", docRef.id), { id: docRef.id });
+
+      reset();
+      setImageFiles([]);
+      alert(t("form.submitSuccess"));
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert(t("form.submitError"));
     }
-
-    const refDoc = collection(db, "products").withConverter(productConverter);
-    const docRef = await addDoc(refDoc, {
-      ...data,
-      imageUrls,
-      createdAt: serverTimestamp(),
-    });
-    await updateDoc(docRef, { id: docRef.id });
-
-    reset();
-    setImageFiles([]);
   };
 
   const fields = [
@@ -136,8 +152,6 @@ export default function ProductForm() {
       sectionKey: "adminInfo",
       inputs: [
         { key: "createdBy", type: "text" },
-        { key: "updatedAt", type: "date" },
-        { key: "createdAt", type: "date" },
         { key: "department", type: "text" },
         { key: "status", type: "text" },
         { key: "hiddenReason", type: "text" },
@@ -154,7 +168,7 @@ export default function ProductForm() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {fields.map(({ sectionKey, inputs }) => (
-          <div key={sectionKey}>
+          <section key={sectionKey}>
             <h2 className="text-xl font-semibold mb-2">
               {t(`section.${sectionKey}`)}
             </h2>
@@ -168,7 +182,7 @@ export default function ProductForm() {
                 errors={errors}
               />
             ))}
-          </div>
+          </section>
         ))}
 
         {imageFiles.length > 0 && (
@@ -217,18 +231,18 @@ type FieldProps = {
   label: string;
   name: keyof FormData;
   type: string;
-  register: ReturnType<typeof useForm>["register"];
+  register: UseFormRegister<FormData>;
   errors: FieldErrors<FormData>;
 };
 
 function Field({ label, name, type, register, errors }: FieldProps) {
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="block font-semibold mb-1">
+      <label htmlFor={name as string} className="block font-semibold mb-1">
         {label}
       </label>
       <input
-        id={name}
+        id={name as string}
         type={type}
         {...register(name, { valueAsNumber: type === "number" })}
         className="border border-gray-300 p-2 rounded w-full"
