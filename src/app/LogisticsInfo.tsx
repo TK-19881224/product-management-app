@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
@@ -35,7 +35,7 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const fetchProducts = async () => {
       const ref = collection(db, "products").withConverter(productConverter);
       const snapshot = await getDocs(ref);
-      const data = snapshot.docs.map((doc) => doc.data());
+      const data = snapshot.docs.map((doc) => doc.data() as ProductData);
       setProducts(data);
     };
 
@@ -61,22 +61,18 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    // a[key] と b[key] は ProductData のプロパティなので型推論されるはず
     const aVal = a[key];
     const bVal = b[key];
 
-    // string か number か undefined なので比較用に文字列か数値に揃える
     const aCompare: string | number = aVal ?? "";
     const bCompare: string | number = bVal ?? "";
 
-    // 両方数値に変換可能なら数値比較
     if (!isNaN(Number(aCompare)) && !isNaN(Number(bCompare))) {
-      const aNum = Number(aCompare);
-      const bNum = Number(bCompare);
-      return direction === "asc" ? aNum - bNum : bNum - aNum;
+      return direction === "asc"
+        ? Number(aCompare) - Number(bCompare)
+        : Number(bCompare) - Number(aCompare);
     }
 
-    // 文字列比較
     return direction === "asc"
       ? aCompare.toString().localeCompare(bCompare.toString())
       : bCompare.toString().localeCompare(aCompare.toString());
@@ -95,7 +91,7 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
       className="p-2 border cursor-pointer hover:bg-gray-200 select-none"
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
+      onKeyDown={(e: KeyboardEvent<HTMLTableCellElement>) => {
         if (e.key === "Enter" || e.key === " ") handleSort(sortKey);
       }}
     >
