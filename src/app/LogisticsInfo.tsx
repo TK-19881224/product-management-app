@@ -61,16 +61,22 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const { key, direction } = sortConfig;
     if (!key) return 0;
 
+    // a[key] と b[key] は ProductData のプロパティなので型推論されるはず
     const aVal = a[key];
     const bVal = b[key];
 
+    // string か number か undefined なので比較用に文字列か数値に揃える
     const aCompare: string | number = aVal ?? "";
     const bCompare: string | number = bVal ?? "";
 
-    if (typeof aCompare === "number" && typeof bCompare === "number") {
-      return direction === "asc" ? aCompare - bCompare : bCompare - aCompare;
+    // 両方数値に変換可能なら数値比較
+    if (!isNaN(Number(aCompare)) && !isNaN(Number(bCompare))) {
+      const aNum = Number(aCompare);
+      const bNum = Number(bCompare);
+      return direction === "asc" ? aNum - bNum : bNum - aNum;
     }
 
+    // 文字列比較
     return direction === "asc"
       ? aCompare.toString().localeCompare(bCompare.toString())
       : bCompare.toString().localeCompare(aCompare.toString());
@@ -86,7 +92,12 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
   const renderSortHeader = (labelKey: SortKey, sortKey: SortKey) => (
     <th
       onClick={() => handleSort(sortKey)}
-      className="p-2 border cursor-pointer hover:bg-gray-200"
+      className="p-2 border cursor-pointer hover:bg-gray-200 select-none"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") handleSort(sortKey);
+      }}
     >
       {t(`logistics.${labelKey}`)}
       {sortConfig.key === sortKey
