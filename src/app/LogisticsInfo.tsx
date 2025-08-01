@@ -61,21 +61,26 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    const aVal = a[key];
-    const bVal = b[key];
+    const aVal = a[key as keyof ProductData];
+    const bVal = b[key as keyof ProductData];
 
-    const aCompare: string | number = aVal ?? "";
-    const bCompare: string | number = bVal ?? "";
+    // 型ガード関数：string または number のみ許容
+    const isSortable = (val: unknown): val is string | number =>
+      typeof val === "string" || typeof val === "number";
 
-    if (!isNaN(Number(aCompare)) && !isNaN(Number(bCompare))) {
+    if (isSortable(aVal) && isSortable(bVal)) {
+      if (!isNaN(Number(aVal)) && !isNaN(Number(bVal))) {
+        return direction === "asc"
+          ? Number(aVal) - Number(bVal)
+          : Number(bVal) - Number(aVal);
+      }
       return direction === "asc"
-        ? Number(aCompare) - Number(bCompare)
-        : Number(bCompare) - Number(aCompare);
+        ? aVal.toString().localeCompare(bVal.toString())
+        : bVal.toString().localeCompare(aVal.toString());
     }
 
-    return direction === "asc"
-      ? aCompare.toString().localeCompare(bCompare.toString())
-      : bCompare.toString().localeCompare(aCompare.toString());
+    // 比較不可能な型（配列や Timestamp）は常に後ろに回す
+    return 0;
   });
 
   const handleSort = (key: SortKey) => {
