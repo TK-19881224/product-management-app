@@ -3,7 +3,6 @@
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { productConverter } from "@/lib/productConverter";
-import { ProductData } from "@/types/product";
 import Papa from "papaparse";
 
 export default function ExportCSV() {

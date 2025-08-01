@@ -15,6 +15,8 @@ type Props = {
 type SortKey = keyof ProductData | "salesPrice";
 
 export default function InventoryPricing({ searchKeyword = "" }: Props) {
+  const { t } = useTranslation();
+
   const [products, setProducts] = useState<ProductData[]>([]);
   const [sortConfig, setSortConfig] = useState<{
     key: SortKey | null;
@@ -39,14 +41,14 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const salesPrice = price * orderUnit;
 
     return [
-      product.name,
-      product.price?.toString(),
-      product.stock?.toString(),
-      product.minStock?.toString(),
-      product.orderUnit?.toString(),
+      product.name ?? "",
+      product.price?.toString() ?? "",
+      product.stock?.toString() ?? "",
+      product.minStock?.toString() ?? "",
+      product.orderUnit?.toString() ?? "",
       salesPrice.toString(),
     ]
-      .map((field) => (field ?? "").toLowerCase())
+      .map((field) => field.toLowerCase())
       .some((field) => field.includes(keyword));
   });
 
@@ -54,8 +56,15 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    let aVal: any = key === "salesPrice" ? (a.price ?? 0) * (a.orderUnit ?? 0) : a[key];
-    let bVal: any = key === "salesPrice" ? (b.price ?? 0) * (b.orderUnit ?? 0) : b[key];
+    const aVal =
+      key === "salesPrice"
+        ? (a.price ?? 0) * (a.orderUnit ?? 0)
+        : a[key as keyof ProductData];
+
+    const bVal =
+      key === "salesPrice"
+        ? (b.price ?? 0) * (b.orderUnit ?? 0)
+        : b[key as keyof ProductData];
 
     if (typeof aVal === "number" && typeof bVal === "number") {
       return direction === "asc" ? aVal - bVal : bVal - aVal;
@@ -63,6 +72,7 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
 
     const aStr = aVal?.toString() ?? "";
     const bStr = bVal?.toString() ?? "";
+
     return direction === "asc"
       ? aStr.localeCompare(bStr)
       : bStr.localeCompare(aStr);
@@ -93,19 +103,18 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const { t } = useTranslation();
 
   return (
     <>
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="bg-gray-100 text-sm text-gray-700">
-            {renderSortHeader(t("inventory.name"), "name")}{/* 商品名 */}
-            {renderSortHeader(t("inventory.price"), "price")}{/* 単価（円） */}
-            {renderSortHeader(t("inventory.salesPrice"), "salesPrice")}{/* 販売価格（円） */}
-            {renderSortHeader(t("inventory.stock"), "stock")}{/* 在庫数 */}
-            {renderSortHeader(t("inventory.minStock"), "minStock")}{/* 最低在庫数 */}
-            {renderSortHeader(t("inventory.orderUnit"), "orderUnit")}{/* 発注単位 */}
+            {renderSortHeader(t("inventory.name"), "name")}
+            {renderSortHeader(t("inventory.price"), "price")}
+            {renderSortHeader(t("inventory.salesPrice"), "salesPrice")}
+            {renderSortHeader(t("inventory.stock"), "stock")}
+            {renderSortHeader(t("inventory.minStock"), "minStock")}
+            {renderSortHeader(t("inventory.orderUnit"), "orderUnit")}
           </tr>
         </thead>
         <tbody>
@@ -126,7 +135,6 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
         </tbody>
       </table>
 
-      {/* ✅ テーブルの外に配置 */}
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

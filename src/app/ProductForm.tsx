@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FieldErrors } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
+import Image from "next/image";
 
 import { db, storage } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
@@ -74,7 +75,7 @@ export default function ProductForm() {
     const refDoc = collection(db, "products").withConverter(productConverter);
     const docRef = await addDoc(refDoc, {
       ...data,
-      imageUrls, // ← ここを保存
+      imageUrls,
       createdAt: serverTimestamp(),
     });
     await updateDoc(docRef, { id: docRef.id });
@@ -154,12 +155,14 @@ export default function ProductForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {fields.map(({ sectionKey, inputs }) => (
           <div key={sectionKey}>
-            <h2 className="text-xl font-semibold mb-2">{t(`section.${sectionKey}`)}</h2>
+            <h2 className="text-xl font-semibold mb-2">
+              {t(`section.${sectionKey}`)}
+            </h2>
             {inputs.map(({ key, type }) => (
               <Field
                 key={key}
                 label={t(`form.${key}`)}
-                name={key}
+                name={key as keyof FormData}
                 type={type}
                 register={register}
                 errors={errors}
@@ -171,11 +174,13 @@ export default function ProductForm() {
         {imageFiles.length > 0 && (
           <div className="flex flex-wrap gap-4 mt-2">
             {imageFiles.map((file, index) => (
-              <img
+              <Image
                 key={index}
                 src={URL.createObjectURL(file)}
                 alt={`Preview ${index + 1}`}
-                className="w-32 h-auto rounded border"
+                width={128}
+                height={128}
+                className="rounded border"
               />
             ))}
           </div>
@@ -213,7 +218,7 @@ type FieldProps = {
   name: keyof FormData;
   type: string;
   register: ReturnType<typeof useForm>["register"];
-  errors: any;
+  errors: FieldErrors<FormData>;
 };
 
 function Field({ label, name, type, register, errors }: FieldProps) {
@@ -229,7 +234,9 @@ function Field({ label, name, type, register, errors }: FieldProps) {
         className="border border-gray-300 p-2 rounded w-full"
       />
       {errors[name] && (
-        <p className="text-red-500 text-sm mt-1">{errors[name]?.message}</p>
+        <p className="text-red-500 text-sm mt-1">
+          {errors[name]?.message?.toString()}
+        </p>
       )}
     </div>
   );

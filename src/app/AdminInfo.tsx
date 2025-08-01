@@ -1,8 +1,7 @@
-// app/AdminInfo.tsx
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // ✅ 翻訳フック
+import { useTranslation } from "react-i18next";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { productConverter } from "@/lib/productConverter";
@@ -24,7 +23,7 @@ type SortKey =
 type SortDirection = "asc" | "desc";
 
 export default function AdminInfo({ searchKeyword = "" }: Props) {
-  const { t } = useTranslation(); // ✅ 翻訳関数
+  const { t } = useTranslation();
 
   const [products, setProducts] = useState<ProductData[]>([]);
   const [sortConfig, setSortConfig] = useState<{
@@ -67,15 +66,15 @@ export default function AdminInfo({ searchKeyword = "" }: Props) {
     const key = sortConfig.key;
     if (!key) return 0;
 
-    let aVal: any = a[key];
-    let bVal: any = b[key];
+    let aVal: string | number = "";
+    let bVal: string | number = "";
 
     if (key === "createdAt" || key === "updatedAt") {
-      aVal = aVal?.toDate().getTime() ?? 0;
-      bVal = bVal?.toDate().getTime() ?? 0;
+      aVal = a[key]?.toDate().getTime() ?? 0;
+      bVal = b[key]?.toDate().getTime() ?? 0;
     } else {
-      aVal = aVal ?? "";
-      bVal = bVal ?? "";
+      aVal = (a[key] ?? "") as string;
+      bVal = (b[key] ?? "") as string;
     }
 
     if (typeof aVal === "number" && typeof bVal === "number") {
@@ -94,7 +93,6 @@ export default function AdminInfo({ searchKeyword = "" }: Props) {
     }));
   };
 
-  // ✅ 翻訳付きヘッダー
   const renderSortHeader = (labelKey: SortKey, sortKey: SortKey) => (
     <th
       onClick={() => handleSort(sortKey)}
