@@ -49,27 +49,30 @@ export default function SupplyInfo({ searchKeyword = "" }: Props) {
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const key = sortConfig.key;
+    const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    let aVal: any = a[key];
-    let bVal: any = b[key];
+    const aVal = a[key];
+    const bVal = b[key];
+
+    let aCompare: string | number = "";
+    let bCompare: string | number = "";
 
     if (key === "purchaseDate") {
-      aVal = aVal ? new Date(aVal).getTime() : 0;
-      bVal = bVal ? new Date(bVal).getTime() : 0;
+      aCompare = aVal ? new Date(aVal as string).getTime() : 0;
+      bCompare = bVal ? new Date(bVal as string).getTime() : 0;
+    } else {
+      aCompare = (aVal ?? "").toString();
+      bCompare = (bVal ?? "").toString();
     }
 
-    aVal = aVal ?? "";
-    bVal = bVal ?? "";
-
-    if (typeof aVal === "number" && typeof bVal === "number") {
-      return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+    if (typeof aCompare === "number" && typeof bCompare === "number") {
+      return direction === "asc" ? aCompare - bCompare : bCompare - aCompare;
     }
 
-    return sortConfig.direction === "asc"
-      ? aVal.toString().localeCompare(bVal.toString())
-      : bVal.toString().localeCompare(aVal.toString());
+    return direction === "asc"
+      ? aCompare.localeCompare(bCompare)
+      : bCompare.localeCompare(aCompare);
   });
 
   const handleSort = (key: SortKey) => {
@@ -79,7 +82,7 @@ export default function SupplyInfo({ searchKeyword = "" }: Props) {
     }));
   };
 
-  const renderSortHeader = (labelKey: keyof ProductData, sortKey: SortKey) => (
+  const renderSortHeader = (labelKey: SortKey, sortKey: SortKey) => (
     <th
       onClick={() => handleSort(sortKey)}
       className="p-2 border cursor-pointer hover:bg-gray-200"
@@ -107,11 +110,11 @@ export default function SupplyInfo({ searchKeyword = "" }: Props) {
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="bg-gray-100 text-sm text-gray-700">
-            {renderSortHeader("supplierCompany", "supplierCompany")}{/* 仕入れ会社名 */}
-            {renderSortHeader("supplier", "supplier")}{/* 担当者名 */}
-            {renderSortHeader("purchasePlace", "purchasePlace")}{/* 仕入れ場所 */}
-            {renderSortHeader("purchaseDate", "purchaseDate")}{/* 仕入れ日 */}
-            {renderSortHeader("lotNumber", "lotNumber")}{/* ロット番号 */}
+            {renderSortHeader("supplierCompany", "supplierCompany")}
+            {renderSortHeader("supplier", "supplier")}
+            {renderSortHeader("purchasePlace", "purchasePlace")}
+            {renderSortHeader("purchaseDate", "purchaseDate")}
+            {renderSortHeader("lotNumber", "lotNumber")}
           </tr>
         </thead>
         <tbody>

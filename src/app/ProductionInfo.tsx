@@ -58,27 +58,30 @@ export default function ProductionInfo({ searchKeyword = "" }: Props) {
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const key = sortConfig.key;
+    const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    let aVal: any = a[key];
-    let bVal: any = b[key];
+    const aVal = a[key];
+    const bVal = b[key];
+
+    let aCompare: string | number = "";
+    let bCompare: string | number = "";
 
     if (key === "productionDate" || key === "expiryDate") {
-      aVal = aVal ? new Date(aVal).getTime() : 0;
-      bVal = bVal ? new Date(bVal).getTime() : 0;
+      aCompare = aVal ? new Date(aVal as string).getTime() : 0;
+      bCompare = bVal ? new Date(bVal as string).getTime() : 0;
+    } else {
+      aCompare = (aVal ?? "").toString();
+      bCompare = (bVal ?? "").toString();
     }
 
-    aVal = aVal ?? "";
-    bVal = bVal ?? "";
-
-    if (typeof aVal === "number" && typeof bVal === "number") {
-      return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+    if (typeof aCompare === "number" && typeof bCompare === "number") {
+      return direction === "asc" ? aCompare - bCompare : bCompare - aCompare;
     }
 
-    return sortConfig.direction === "asc"
-      ? aVal.toString().localeCompare(bVal.toString())
-      : bVal.toString().localeCompare(aVal.toString());
+    return direction === "asc"
+      ? aCompare.localeCompare(bCompare)
+      : bCompare.localeCompare(aCompare);
   });
 
   const handleSort = (key: SortKey) => {
@@ -88,7 +91,6 @@ export default function ProductionInfo({ searchKeyword = "" }: Props) {
     }));
   };
 
-  // ⬅ 翻訳付きヘッダー表示
   const renderSortHeader = (labelKey: SortKey, sortKey: SortKey) => (
     <th
       onClick={() => handleSort(sortKey)}

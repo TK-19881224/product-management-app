@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next"; // ✅ 翻訳フック
+import { useTranslation } from "react-i18next";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { productConverter } from "@/lib/productConverter";
@@ -23,7 +23,7 @@ type SortKey =
 type SortDirection = "asc" | "desc";
 
 export default function InventoryPricing({ searchKeyword = "" }: Props) {
-  const { t } = useTranslation(); // ✅ 翻訳関数
+  const { t } = useTranslation();
 
   const [products, setProducts] = useState<ProductData[]>([]);
   const [sortConfig, setSortConfig] = useState<{
@@ -53,29 +53,27 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
       product.weight?.toString(),
       product.shippingRestriction,
     ]
-      .map((field) => (field ?? "").toLowerCase())
+      .map((field) => (field ?? "").toString().toLowerCase())
       .some((field) => field.includes(keyword));
   });
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
-    const key = sortConfig.key;
+    const { key, direction } = sortConfig;
     if (!key) return 0;
 
-    let aVal: any = a[key];
-    let bVal: any = b[key];
+    const aVal = a[key];
+    const bVal = b[key];
 
-    aVal = aVal ?? "";
-    bVal = bVal ?? "";
+    const aCompare: string | number = aVal ?? "";
+    const bCompare: string | number = bVal ?? "";
 
-    if (!isNaN(Number(aVal)) && !isNaN(Number(bVal))) {
-      aVal = Number(aVal);
-      bVal = Number(bVal);
-      return sortConfig.direction === "asc" ? aVal - bVal : bVal - aVal;
+    if (typeof aCompare === "number" && typeof bCompare === "number") {
+      return direction === "asc" ? aCompare - bCompare : bCompare - aCompare;
     }
 
-    return sortConfig.direction === "asc"
-      ? aVal.toString().localeCompare(bVal.toString())
-      : bVal.toString().localeCompare(aVal.toString());
+    return direction === "asc"
+      ? aCompare.toString().localeCompare(bCompare.toString())
+      : bCompare.toString().localeCompare(aCompare.toString());
   });
 
   const handleSort = (key: SortKey) => {
@@ -85,7 +83,6 @@ export default function InventoryPricing({ searchKeyword = "" }: Props) {
     }));
   };
 
-  // ✅ 翻訳キーを使ったソートヘッダー表示
   const renderSortHeader = (labelKey: SortKey, sortKey: SortKey) => (
     <th
       onClick={() => handleSort(sortKey)}
