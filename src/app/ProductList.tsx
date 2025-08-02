@@ -78,9 +78,8 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
           <button
             key={key}
             onClick={() => handleSort(key)}
-            className={`px-3 py-1 rounded border ${
-              sortKey === key ? "bg-blue-500 text-white" : "bg-gray-100"
-            }`}
+            className={`px-3 py-1 rounded border ${sortKey === key ? "bg-blue-500 text-white" : "bg-gray-100"
+              }`}
           >
             {t(`product.${key}`)}
             {sortKey === key && (sortOrder === "asc" ? " ↑" : " ↓")}
@@ -118,6 +117,7 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
                       width={96}
                       height={96}
                       className="rounded object-cover"
+                      unoptimized
                     />
                   ))}
                 </div>
