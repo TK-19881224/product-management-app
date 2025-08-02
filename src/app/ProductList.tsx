@@ -31,14 +31,18 @@ export default function ProductList({ searchKeyword }: { searchKeyword: string }
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const fetchProducts = async () => {
-    const snapshot = await getDocs(
-      collection(db, "products").withConverter(productConverter)
-    );
-    const data = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Product[];
-    setProducts(data);
+    try {
+      const snapshot = await getDocs(
+        collection(db, "products").withConverter(productConverter)
+      );
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Product[];
+      setProducts(data);
+    } catch (err) {
+      console.error("❌ Firestore 取得エラー:", err);
+    }
   };
 
   const deleteProduct = async (id: string) => {
